@@ -15,14 +15,14 @@
 <input id="pac-input" class="controls" type="text" placeholder="Search Box">
 <div id="google-map"></div>
 <div id="right-panel">
-  <h2>Results</h2>
+  <h2>Tech Meetups:</h2>
   <ul id="places" data-bind="foreach: meetupList">
     <li data-bind="click: $parent.goToMarker">
      <h5 data-bind="text: name"></h5>
-     <h6 data-bind="text: address_1"></h6>
+     <h6 data-bind="text: date"></h6>
+      <h6 data-bind="text: address_1"></h6>
     </li>
   </ul>
-  <button id="more">More results</button>
 </div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDYW0lUV13O_vzHoK3wNKwREkUpAB4Hvbw&libraries=places"></script>

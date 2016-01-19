@@ -93,13 +93,18 @@ ul {
 }
 li {
     background-color: #f1f1f1;
-    padding: 10px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
 }
 li:nth-child(odd) {
     background-color: #fcfcfc;
+}
+
+li:hover {
+    cursor: pointer;
+    color: black;
+    background: #E44E49;
 }
 #more {
     width: 100%;

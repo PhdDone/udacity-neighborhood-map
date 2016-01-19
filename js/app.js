@@ -48,12 +48,9 @@ var appViewModel = function () {
         // more details for that place.
         searchBox.addListener('places_changed', function () {
             var places = searchBox.getPlaces();
-            console.log(places.length);
             if (places.length == 0) {
                 return;
             }
-            console.log(places[0].geometry.location.lat());
-            console.log(places[0].geometry.location.lng());
             self.currentLat(places[0].geometry.location.lat());
             self.currentLng(places[0].geometry.location.lng());
             self.currentTitle(places[0].title);
@@ -89,7 +86,6 @@ var appViewModel = function () {
             var currentLocation = places[0].geometry.location;
             self.centerString = '&lat=' + self.currentLat() + '&lon=' + self.currentLng();
             var url = meetupApiUrl + self.centerString;
-            console.log(url);
             self.cleanMeetupList();
             self.fetchMeetups(url);
             //self.updateStores();
@@ -127,11 +123,9 @@ var appViewModel = function () {
             timeout: 5000,
             contentType: "application/json",
             dataType: "jsonp",
-            cache: false,
+            cache: false
         }).done(function(response) {
-            console.log(response);
             data = response.results;
-            console.log(data);
             data.forEach(function(meetup) {
                 self.meetupList.push(new Meetup(meetup));
             });
@@ -139,34 +133,6 @@ var appViewModel = function () {
         }).fail(function (response, status, error) {
             $('#search-summary').text('Meetup data could not load...');
         });
-    };
-
-    this.updateStores = function () {
-        var service = new google.maps.places.PlacesService(map);
-        service.nearbySearch({
-            location: {lat: self.currentLat(), lng: self.currentLng()},
-            radius: 1000,
-            types: ['grocery_or_supermarket']
-        }, self.processResults);
-    };
-
-    this.processResults = function (results, status, pagination) {
-        //if (status !== google.maps.places.PlacesServiceStatus.OK) {
-        //return;
-        //} else {
-        self.createMarkers(results);
-
-        if (pagination.hasNextPage) {
-            var moreButton = document.getElementById('more'); //?
-
-            moreButton.disabled = false;
-
-            moreButton.addEventListener('click', function () {
-                moreButton.disabled = true;
-                pagination.nextPage();
-            });
-        }
-        //}
     };
 
     this.cleanMarkers = function () {
@@ -197,11 +163,13 @@ var appViewModel = function () {
                     title: name,
                     position: meetLocation
                 });
-                console.log(url);
-                self.markers.push({marker: marker, url: url}); //clean before push?
-                //self.bounds.extend(new google.maps.LatLng(meetLocation));
+
+                self.markers.push({marker: marker, url: url}); //clean before push
+                google.maps.event.addListener(marker, 'click', function () {
+                    self.goToMarker({name: function () { return marker.title; } });
+                });
             }
-            map.fitBounds(self.bounds);
+            //map.fitBounds(self.bounds);
             map.setZoom(11);
             map.setCenter({lat: self.currentLat(), lng: self.currentLng()});
         });
@@ -214,11 +182,14 @@ var appViewModel = function () {
                 map.panTo(self.markers()[key].marker.position);
                 map.setZoom(11);
                 var url = self.markers()[key].url();
-                //var contentString = '<h5>' + clickedMeetName + '</h5>' + '<h6>' + url + '</h6>';
                 var contentString = '<a href="' + url + '">' + clickedMeetName + '</a>';
                 infowindow.setContent(contentString);
                 infowindow.open(map, self.markers()[key].marker);
+                self.markers()[key].marker.setAnimation(google.maps.Animation.BOUNCE);
                 map.panBy(0, -150);
+            }
+            else {
+                self.markers()[key].marker.setAnimation(null);
             }
         }
     };
