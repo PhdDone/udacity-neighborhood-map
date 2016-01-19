@@ -20,9 +20,12 @@
     <li data-bind="click: $parent.goToMarker">
      <h5 data-bind="text: name"></h5>
      <h6 data-bind="text: date"></h6>
-      <h6 data-bind="text: address_1"></h6>
     </li>
   </ul>
+  <p id="search-summary">
+    <span data-bind="text: 'Total: ' + meetupList().length"></span>
+    Meetups
+  </p>
 </div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDYW0lUV13O_vzHoK3wNKwREkUpAB4Hvbw&libraries=places"></script>

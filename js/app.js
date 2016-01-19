@@ -96,6 +96,7 @@ var appViewModel = function () {
             //map.fitBounds(self.bounds);
         });
     };
+
     var Meetup = function (meetup) {
         var self = this;
 
@@ -152,6 +153,7 @@ var appViewModel = function () {
         self.cleanMarkers();
 
         self.meetupList().forEach(function(meetup) {
+            //filter
             if (meetup.venue()) {
                 var lat = meetup.venue().lat;
                 var lon = meetup.venue().lon;
