@@ -6,11 +6,12 @@
 var appViewModel = function () {
 
     var self = this;
-    this.currentLat = ko.observable(33.6447758);
-    this.currentLng = ko.observable(-117.8314231);//this.currentLocation() will return location
-    this.currentTitle = ko.observable();
-    this.markers = ko.observableArray([]);
-    this.meetupList = ko.observableArray([]);
+    self.currentLat = ko.observable(33.6447758);
+    self.currentLng = ko.observable(-117.8314231);//this.currentLocation() will return location
+    self.currentTitle = ko.observable();
+    self.markers = ko.observableArray([]);
+    self.meetupList = ko.observableArray([]);
+    self.searchSummary = ko.observable();
 
     var map;
     var bounds;
@@ -30,7 +31,7 @@ var appViewModel = function () {
         }));
         self.centerMarker().setMap(null);
         infowindow = new google.maps.InfoWindow({maxWidth: 300});
-    };
+    }
 
     function initAutocomplete() {
 
@@ -95,7 +96,7 @@ var appViewModel = function () {
             //map.setZoom(14);  //not working here, have to put zoon in self.updateStore() function??
             //map.fitBounds(self.bounds);
         });
-    };
+    }
 
     var Meetup = function (meetup) {
         var self = this;
@@ -130,9 +131,10 @@ var appViewModel = function () {
             data.forEach(function(meetup) {
                 self.meetupList.push(new Meetup(meetup));
             });
+            self.searchSummary("Total: " + self.meetupList().length + " meetups");
             self.createMarkers();
         }).fail(function (response, status, error) {
-            $('#search-summary').text('Meetup data could not load...');
+            self.searchSummary("Meetup data could not load...");
         });
     };
 
@@ -200,4 +202,6 @@ var appViewModel = function () {
     initAutocomplete();
 };
 
-ko.applyBindings(new appViewModel());
+var start = function() {
+    ko.applyBindings(new appViewModel());
+};
