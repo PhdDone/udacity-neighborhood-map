@@ -1,37 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="css/app.css">
-  <title>Places Searchbox</title>
-  <style>
-    #target {
-      width: 345px;
-    }
-  </style>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/app.css">
+    <title>Places Searchbox</title>
+    <style>
+        #target {
+            width: 345px;
+        }
+    </style>
 </head>
 <body>
 <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+
 <div id="google-map"></div>
+
 <div id="right-panel">
-  <h2>Tech Meetups:</h2>
-  <ul id="places" data-bind="foreach: meetupList">
-    <li data-bind="click: $parent.goToMarker">
-     <h5 data-bind="text: name"></h5>
-     <h6 data-bind="text: date"></h6>
-    </li>
-  </ul>
-  <p id="search-summary">
-    <span data-bind="text: 'Total: ' + meetupList().length"></span>
-    Meetups
-  </p>
+    <h2>Tech Meetups:</h2>
+    <ul id="places" data-bind="foreach: filteredMeetups">
+        <li data-bind="click: $parent.goToMarker">
+            <h5 data-bind="text: name"></h5>
+        </li>
+    </ul>
+    <p id="search-summary">
+        <span data-bind="text: searchSummary"></span>
+    </p>
 </div>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDYW0lUV13O_vzHoK3wNKwREkUpAB4Hvbw&libraries=places"></script>
+<div class="filter-bar" data-bind="submit: filterResults, update: clearFilter">
+    <form name="filter">
+        <input type="text" placeholder="Filter by name/type" data-bind="value:filterKeyword, selectOnFocus: true">
+        <input type="submit" value="Find" id="submit">
+        <button data-bind="click: clearFilter">Clear</button>
+    </form>
+</div>
+
 <script src="js/jquery-2.1.3.min.js"></script>
 <script src="js/knockout-3.4.0.js"></script>
 <script src="js/app.js"></script>
-
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDYW0lUV13O_vzHoK3wNKwREkUpAB4Hvbw&libraries=places&callback=start"></script>
 </body>
 </html>

@@ -3,9 +3,21 @@ html, body {
     margin: 0;
     padding: 0;
 }
+
 #google-map {
     height: 100%;
 }
+
+.filter-bar {
+    position: absolute;
+    top: 88%;
+    right: 40px;
+    width: 155px;
+    background-color: rgba(255,255,255, 0.9);
+    border: 1px solid gray;
+    padding: 5px 10px;
+}
+
 .controls {
     margin-top: 10px;
     border: 1px solid transparent;
@@ -17,6 +29,16 @@ html, body {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
+#places {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+h2 {
+    font-size: 22px;
+    margin: 2px 0 5px 0;
+}
+
+
 #pac-input {
     background-color: #fff;
     font-family: Roboto;
@@ -25,7 +47,7 @@ html, body {
     margin-left: 12px;
     padding: 0 11px 0 13px;
     text-overflow: ellipsis;
-    width: 300px;
+    width: 50%;
 }
 
 #pac-input:focus {
@@ -50,7 +72,7 @@ html, body {
 
 #right-panel {
     font-family: 'Roboto','sans-serif';
-    line-height: 30px;
+    line-height: 10px;
     padding-left: 10px;
 }
 
@@ -79,10 +101,7 @@ html, body {
     border: 1px solid #999;
     background: #fff;
 }
-h2 {
-    font-size: 22px;
-    margin: 0 0 5px 0;
-}
+
 ul {
     list-style-type: none;
     padding: 0;
@@ -111,4 +130,45 @@ li:hover {
     width: 100%
     color: white;
     margin: 8px;
+}
+
+@media only screen and (max-width: 480px) {
+
+    #google-map{
+        width: 100%;
+    }
+
+    #right-panel{
+        top: 45%;
+        left: 0%;
+        width: 100%;
+        height: 15%;
+        //right: -500px
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        height: 80%;
+        width: 100%;
+        overflow-y: scroll;
+    }
+
+    li {
+        height: 70%;
+        background-color: #f1f1f1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    #search-summary {
+        display: none;
+    }
+
+    h2 {
+        font-size: 10px;
+        margin: 2px 0 5px 0;
+    }
 }

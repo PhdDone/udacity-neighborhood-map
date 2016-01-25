@@ -6,11 +6,15 @@
 var appViewModel = function () {
 
     var self = this;
-    this.currentLat = ko.observable(33.6447758);
-    this.currentLng = ko.observable(-117.8314231);//this.currentLocation() will return location
-    this.currentTitle = ko.observable();
-    this.markers = ko.observableArray([]);
-    this.meetupList = ko.observableArray([]);
+    self.currentLat = ko.observable(33.6447758);
+    self.currentLng = ko.observable(-117.8314231);//this.currentLocation() will return location
+    self.currentTitle = ko.observable();
+    self.markers = ko.observableArray([]);
+    self.meetupList = ko.observableArray([]);
+    self.searchSummary = ko.observable();
+    self.filterKeyword = ko.observable('');
+    self.filteredMeetups = ko.observableArray([]);
+    self.animationKey = ko.observable();
 
     var map;
     var bounds;
@@ -30,7 +34,7 @@ var appViewModel = function () {
         }));
         self.centerMarker().setMap(null);
         infowindow = new google.maps.InfoWindow({maxWidth: 300});
-    };
+    }
 
     function initAutocomplete() {
 
@@ -95,7 +99,7 @@ var appViewModel = function () {
             //map.setZoom(14);  //not working here, have to put zoon in self.updateStore() function??
             //map.fitBounds(self.bounds);
         });
-    };
+    }
 
     var Meetup = function (meetup) {
         var self = this;
@@ -128,11 +132,15 @@ var appViewModel = function () {
         }).done(function(response) {
             data = response.results;
             data.forEach(function(meetup) {
-                self.meetupList.push(new Meetup(meetup));
+                if (meetup.venue) {
+                    self.meetupList.push(new Meetup(meetup));
+                }
             });
+            self.filteredMeetups(self.meetupList());
+            self.searchSummary("Total: " + self.filteredMeetups().length + " meetups");
             self.createMarkers();
         }).fail(function (response, status, error) {
-            $('#search-summary').text('Meetup data could not load...');
+            self.searchSummary("Meetup data could not load...");
         });
     };
 
@@ -153,7 +161,7 @@ var appViewModel = function () {
         self.cleanMarkers();
 
         self.meetupList().forEach(function(meetup) {
-            //filter
+            //should have the same size with meetupList
             if (meetup.venue()) {
                 var lat = meetup.venue().lat;
                 var lon = meetup.venue().lon;
@@ -186,7 +194,11 @@ var appViewModel = function () {
                 var url = self.markers()[key].url();
                 var contentString = '<a href="' + url + '">' + clickedMeetName + '</a>';
                 infowindow.setContent(contentString);
+                self.animationKey(key);
                 infowindow.open(map, self.markers()[key].marker);
+                google.maps.event.addListener(infowindow, 'closeclick', function() {
+                    self.markers()[self.animationKey()].marker.setAnimation(null);
+                });
                 self.markers()[key].marker.setAnimation(google.maps.Animation.BOUNCE);
                 map.panBy(0, -150);
             }
@@ -196,8 +208,42 @@ var appViewModel = function () {
         }
     };
 
+    this.clearFilter = function() {
+        //self.filteredList(self.grouponDeals());
+        //self.dealStatus(self.numDeals() + ' food and drink deals found near ' + self.searchLocation());
+        self.filterKeyword('');
+        self.filteredMeetups(self.meetupList());
+        console.log(self.markers().length);
+        for(var i = 0; i < self.markers().length; i++) {
+            self.markers()[i].marker.setMap(map);
+        }
+        self.searchSummary("Total: " + self.filteredMeetups().length + " meetups");
+    };
+
+    this.filterResults = function() {
+        console.log(self.filterKeyword());
+        var searchWord = self.filterKeyword().toLowerCase();
+        if(!searchWord) {
+            return;
+        } else {
+            self.filteredMeetups([]);
+            for (var i = 0; i < self.markers().length; i++) {
+                if (self.meetupList()[i].name().toLowerCase().indexOf(searchWord) != -1) {
+                    self.markers()[i].marker.setMap(map);
+                    self.filteredMeetups.push(self.meetupList()[i]);
+                } else {
+                    self.markers()[i].marker.setMap(null);
+                }
+            }
+            self.searchSummary("Total: " + self.filteredMeetups().length + " meetups");
+        }
+    }
+
+
     initMap();
     initAutocomplete();
 };
 
-ko.applyBindings(new appViewModel());
+var start = function() {
+    ko.applyBindings(new appViewModel());
+};
